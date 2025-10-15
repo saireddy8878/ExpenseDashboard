@@ -1,0 +1,197 @@
+
+_schema-version: 3.3.0
+ID: expense-dashboard
+description: A simple CAP project.
+version: 1.0.0
+modules:
+- name: expense-dashboard-srv 
+  type: nodejs
+  path: gen/srv
+  requires:
+  - name: expense-dashboard-auth
+  - name: expense-dashboard-db
+  - name: expense-dashboard-destination-service
+  provides:
+  - name: srv-api
+    properties:
+      srv-url: ${default-url}
+  parameters:
+    buildpack: nodejs_buildpack
+    instances: 1
+  build-parameters:
+    builder: npm-ci
+- name: expense-dashboard-db-deployer
+  type: hdb
+  path: gen/db
+  requires:
+  - name: expense-dashboard-db
+  parameters:
+    buildpack: nodejs_buildpack
+- name: expense-dashboard-app-content
+  type: com.sap.application.content
+  path: .
+  requires:
+  - name: expense-dashboard-repo-host
+    parameters:
+      content-target: true
+  build-parameters:
+    build-result: resources
+    requires:
+    - artifacts:
+      - comdemoadminadminapp.zip
+      name: comdemoadminadminapp
+      target-path: resources/
+    - artifacts:
+      - comdemoemployeeappemployeeapp.zip
+      name: comdemoemployeeappemployeeapp
+      target-path: resources/
+- name: comdemoadminadminapp
+  type: html5
+  path: app/adminapp
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: comdemoemployeeappemployeeapp
+  type: html5
+  path: app/employeeapp
+  build-parameters:
+    build-result: dist
+    builder: custom
+    commands:
+    - npm install
+    - npm run build:cf
+    supported-platforms: []
+- name: expense-dashboard-app-deployer
+  type: com.sap.application.content
+  path: gen
+  requires:
+  - name: expense-dashboard-auth
+  - name: srv-api
+  - name: expense-dashboard-repo-host
+  parameters:
+    config:
+      HTML5Runtime_enabled: true
+      init_data:
+        instance:
+          destinations:
+          - Authentication: NoAuthentication
+            HTML5.DynamicDestination: true
+            HTML5.ForwardAuthToken: true
+            Name: srv-api
+            ProxyType: Internet
+            Type: HTTP
+            URL: ~{srv-api/srv-url}
+          - Authentication: NoAuthentication
+            Name: ui5
+            ProxyType: Internet
+            Type: HTTP
+            URL: https://ui5.sap.com
+          existing_destinations_policy: update
+  build-parameters:
+    build-result: resources/
+    requires:
+        - artifacts:
+            - comdemoadminadminapp.zip
+          name: comdemoadminadminapp
+          target-path: resources/
+        - artifacts:
+            - comdemoemployeeappemployeeapp.zip
+          name: comdemoemployeeappemployeeapp
+          target-path: resources/
+- name: expense-dashboard-destinations
+  type: com.sap.application.content
+  requires:
+  - name: expense-dashboard-auth
+    parameters:
+      service-key:
+        name: expense-dashboard-auth-key
+  - name: srv-api
+  parameters:
+    content:
+      instance:
+        destinations:
+        - Name: expense-dashboard-html5-repository
+          ServiceInstanceName: expense-dashboard-html5-repo-host
+          ServiceKeyName: expense-dashboard-html5-repo-host-key
+          sap.cloud.service: expensedashboard.service
+        - Authentication: OAuth2UserTokenExchange
+          Name: expense-dashboard-auth
+          ServiceInstanceName: expense-dashboard-auth
+          ServiceKeyName: expense-dashboard-auth-key
+          sap.cloud.service: expensedashboard.service
+        existing_destinations_policy: update
+  build-parameters:
+    no-source: true
+resources:
+- name: expense-dashboard-auth
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      role-collections:
+      - description: generated
+        name: admin (expense-dashboard ${org}-${space})
+        role-template-references:
+        - $XSAPPNAME.admin
+      - description: generated
+        name: employeeRole (expense-dashboard ${org}-${space})
+        role-template-references:
+        - $XSAPPNAME.employeeRole
+      tenant-mode: dedicated
+      xsappname: expense-dashboard-${org}-${space}
+    path: ./xs-security.json
+    service: xsuaa
+    service-plan: application
+- name: expense-dashboard-db
+  type: com.sap.xs.hdi-container
+  parameters:
+    service: hana
+    service-plan: hdi-shared
+- name: expense-dashboard-repo-host
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-name: expense-dashboard-html5-service
+    service-plan: app-host
+- name: expense-dashboard-destination-service
+  type: org.cloudfoundry.managed-service
+  parameters:
+    config:
+      HTML5Runtime_enabled: false
+      init_data:
+        instance:
+          destinations:
+          - Authentication: NoAuthentication
+            Name: ui5
+            ProxyType: Internet
+            Type: HTTP
+            URL: https://ui5.sap.com
+          existing_destinations_policy: update
+      version: 1.0.0
+    service: destination
+    service-name: expense-dashboard-destination-service
+    service-plan: lite
+  requires:
+  - name: srv-api
+    group: destinations
+    properties:
+      forwardAuthToken: true
+      name: srv-api
+      url: ~{srv-url}
+- name: expense-dashboard-html5-runtime
+  type: org.cloudfoundry.managed-service
+  parameters:
+    service: html5-apps-repo
+    service-plan: app-runtime
+parameters:
+  deploy_mode: html5-repo
+  enable-parallel-deployments: true
+build-parameters:
+  before-all:
+  - builder: custom
+    commands:
+    - npm ci
+    - npx cds build --production

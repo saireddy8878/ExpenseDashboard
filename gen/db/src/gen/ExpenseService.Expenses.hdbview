@@ -1,0 +1,11 @@
+VIEW ExpenseService_Expenses AS SELECT
+  Expenses_0.ID,
+  Expenses_0.createdAt,
+  Expenses_0.createdBy,
+  Expenses_0.modifiedAt,
+  Expenses_0.modifiedBy,
+  Expenses_0.employee_ID,
+  Expenses_0.tripName,
+  Expenses_0.tripDate,
+  Expenses_0.status
+FROM com_demo_expenses_Expenses AS Expenses_0

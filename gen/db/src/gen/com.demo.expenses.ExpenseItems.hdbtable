@@ -1,0 +1,14 @@
+COLUMN TABLE com_demo_expenses_ExpenseItems (
+  ID NVARCHAR(36) NOT NULL,
+  createdAt TIMESTAMP,
+  createdBy NVARCHAR(255),
+  modifiedAt TIMESTAMP,
+  modifiedBy NVARCHAR(255),
+  expense_ID NVARCHAR(36),
+  description NVARCHAR(255),
+  amount DECIMAL(9, 2),
+  currency_code NVARCHAR(3),
+  receipt BLOB,
+  receiptUrl NVARCHAR(5000),
+  PRIMARY KEY(ID)
+)

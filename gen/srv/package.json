@@ -1,0 +1,62 @@
+{
+  "name": "expense-dashboard",
+  "version": "1.0.0",
+  "description": "A simple CAP project.",
+  "dependencies": {
+    "@cap-js/hana": "^2",
+    "@sap/cds": "^9",
+    "@sap/xssec": "^4",
+    "express": "^4"
+  },
+  "devDependencies": {
+    "@cap-js/sqlite": "^2",
+    "@sap/cds-dk": "^9",
+    "mbt": "^1.2.29",
+    "rimraf": "^5.0.5"
+  },
+  "scripts": {
+    "start": "cds-serve",
+    "watch-adminapp": "cds watch --open com.demo.admin.adminapp/index.html?sap-ui-xx-viewCache=false --livereload false",
+    "undeploy": "cf undeploy expense-dashboard --delete-services --delete-service-keys --delete-service-brokers",
+    "build": "rimraf resources mta_archives && mbt build --mtar archive",
+    "deploy": "cf deploy mta_archives/archive.mtar --retries 1",
+    "watch-employeeapp": "cds watch --open com.demo.employeeapp.employeeapp/index.html?sap-ui-xx-viewCache=false --livereload false"
+  },
+  "private": true,
+  "cds": {
+    "requires": {
+      "[development]": {
+        "auth": {
+          "kind": "mocked",
+          "users": {
+            "alice": {
+              "roles": [
+                "employeeRole",
+                "admin"
+              ]
+            },
+            "bob": {
+              "roles": [
+                "employeeRole"
+              ]
+            }
+          }
+        }
+      },
+      "[production]": {
+        "auth": "xsuaa",
+        "db": "hana"
+      },
+      "destinations": true,
+      "html5-repo": true,
+      "workzone": true
+    }
+  },
+  "sapux": [
+    "app/adminapp",
+    "app/employeeapp"
+  ],
+  "engines": {
+    "node": ">=20"
+  }
+}

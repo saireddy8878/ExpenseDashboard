@@ -1,0 +1,36 @@
+{
+  "xsappname": "expense_dashboard_sda_lab",
+  "tenant-mode": "dedicated",
+  "scopes": [
+    {
+      "name": "$XSAPPNAME.admin",
+      "description": "Administrator role"
+    },
+    {
+      "name": "$XSAPPNAME.employeeRole",
+      "description": "Employee role"
+    }
+  ],
+  "role-templates": [
+    {
+      "name": "Admin",
+      "description": "Administrator access to Expense Dashboard",
+      "scope-references": [
+        "$XSAPPNAME.admin"
+      ]
+    },
+    {
+      "name": "Employee",
+      "description": "Standard employee access to Expense Dashboard",
+      "scope-references": [
+        "$XSAPPNAME.employeeRole"
+      ]
+    }
+  ],
+  "authorities": [],
+  "oauth2-configuration": {
+    "redirect-uris": [
+      "https://*.cfapps.eu10.hana.ondemand.com/**"
+    ]
+  }
+}

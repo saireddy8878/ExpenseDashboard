@@ -1,0 +1,12 @@
+COLUMN TABLE com_demo_expenses_Expenses (
+  ID NVARCHAR(36) NOT NULL,
+  createdAt TIMESTAMP,
+  createdBy NVARCHAR(255),
+  modifiedAt TIMESTAMP,
+  modifiedBy NVARCHAR(255),
+  employee_ID NVARCHAR(36),
+  tripName NVARCHAR(255),
+  tripDate DATE,
+  status NVARCHAR(20) DEFAULT 'Draft',
+  PRIMARY KEY(ID)
+)

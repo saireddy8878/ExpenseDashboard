@@ -1,0 +1,16 @@
+COLUMN TABLE ExpenseService_Expenses_drafts (
+  ID NVARCHAR(36) NOT NULL,
+  createdAt TIMESTAMP NULL,
+  createdBy NVARCHAR(255) NULL,
+  modifiedAt TIMESTAMP NULL,
+  modifiedBy NVARCHAR(255) NULL,
+  employee_ID NVARCHAR(36) NULL,
+  tripName NVARCHAR(255) NULL,
+  tripDate DATE NULL,
+  status NVARCHAR(20) NULL DEFAULT 'Draft',
+  IsActiveEntity BOOLEAN,
+  HasActiveEntity BOOLEAN,
+  HasDraftEntity BOOLEAN,
+  DraftAdministrativeData_DraftUUID NVARCHAR(36) NOT NULL,
+  PRIMARY KEY(ID)
+)

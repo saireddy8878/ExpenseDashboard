@@ -1,0 +1,13 @@
+VIEW ExpenseService_ExpenseItems AS SELECT
+  ExpenseItems_0.ID,
+  ExpenseItems_0.createdAt,
+  ExpenseItems_0.createdBy,
+  ExpenseItems_0.modifiedAt,
+  ExpenseItems_0.modifiedBy,
+  ExpenseItems_0.expense_ID,
+  ExpenseItems_0.description,
+  ExpenseItems_0.amount,
+  ExpenseItems_0.currency_code,
+  ExpenseItems_0.receipt,
+  ExpenseItems_0.receiptUrl
+FROM com_demo_expenses_ExpenseItems AS ExpenseItems_0
