@@ -133,15 +133,15 @@ resources:
     config:
       role-collections:
       - description: generated
-        name: admin (expense-dashboard ${org}-${space})
+        name: admin (expense-dashboard ${space})
         role-template-references:
         - $XSAPPNAME.admin
       - description: generated
-        name: employeeRole (expense-dashboard ${org}-${space})
+        name: employeeRole (expense-dashboard ${space})
         role-template-references:
         - $XSAPPNAME.employeeRole
       tenant-mode: dedicated
-      xsappname: expense-dashboard-${org}-${space}
+      xsappname: expense-dashboard-${space}
     path: ./xs-security.json
     service: xsuaa
     service-plan: application
