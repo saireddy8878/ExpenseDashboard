@@ -1,17 +1,19 @@
 namespace com.demo.expenses;
 
-using { Currency, cuid, managed } from '@sap/cds/common';
+using { Currency , cuid, managed } from '@sap/cds/common';
 
 entity Employees : cuid, managed {
   @mandatory
   name       : String(111); 
+  email : String(255)
   @mandatory
-  email      : String(255); 
+  @assert.format : '^[^\s@]+@[^\s@]+\.[^\s@]+$';
+
   expenses   : Composition of many Expenses on expenses.employee = $self; 
 }
-
 entity Expenses : cuid, managed {
   employee   : Association to Employees;
+  @mandatory
   tripName   : String(255);
   tripDate   : Date;
   @readonly:true

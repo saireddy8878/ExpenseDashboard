@@ -1,5 +1,4 @@
 using AdminService as service from '../../srv/admin-service';
-// Define the ExpenseItemsGroup FieldGroup
 
 annotate service.Expenses with @(
     UI.FieldGroup #GeneratedGroup : {

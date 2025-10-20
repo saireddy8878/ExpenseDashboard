@@ -1,4 +1,10 @@
 using ExpenseService as service from '../../srv/expenses-service';
+using {sap} from '@sap/cds/common';
+
+using {
+  sap.common,
+  sap.common.Currencies
+} from '@sap/cds/common';
 
 // Root: Employees (draft enabled in service definition)
 annotate service.Employees with @odata.draft.enabled;
@@ -61,14 +67,14 @@ annotate service.Expenses with @(
   UI.FieldGroup #ExpenseInfo : {
     Data : [
       { Value : tripName, Label : 'Trip' },
-      { Value : tripDate, Label : 'Date' },
-      { Value : status,   Label : 'Status' }
+      { Value : tripDate, Label : 'Date' }
+      
     ]
   },
   UI.LineItem : [
     { Value : tripName, Label : 'Trip' },
-    { Value : tripDate, Label : 'Date' },
-    { Value : status,   Label : 'Status' }
+    { Value : tripDate, Label : 'Date' }
+   
   ],
   UI.DataField: { maxValue: $now }
 );
@@ -100,3 +106,40 @@ annotate service.ExpenseItems with @(
     }
   ]
 );
+annotate sap.common.Currencies with @(
+  Common.SemanticKey: [code],
+  Identification    : [{Value: code}],
+  UI                : {
+    SelectionFields: [
+      name,
+      descr
+    ],
+    LineItem       : [
+      {Value: descr},
+      {Value: symbol},
+      {Value: code},
+    ],
+  }
+);
+annotate Currencies with {
+  symbol @Common.Label: '{i18n>Currency}';
+}
+annotate common.Currencies with @(UI: {
+  HeaderInfo         : {
+    TypeName      : '{i18n>Currency}',
+    TypeNamePlural: '{i18n>Currencies}',
+    Title         : {Value: descr},
+    Description   : {Value: code}
+  },
+  Facets             : [{
+    $Type : 'UI.ReferenceFacet',
+    Label : '{i18n>Details}',
+    Target: '@UI.FieldGroup#Details'
+  }],
+  FieldGroup #Details: {Data: [
+    {Value: name},
+    {Value: symbol},
+    {Value: code},
+    {Value: descr}
+  ]}
+});
