@@ -4,7 +4,7 @@
   "description": "A simple CAP project.",
   "dependencies": {
     "@cap-js/hana": "^2",
-    "@sap/cds": "^9",
+    "@sap/cds": "^9.4.3",
     "@sap/xssec": "^4",
     "express": "^4"
   },
@@ -46,7 +46,13 @@
       },
       "[production]": {
         "auth": "xsuaa",
-        "db": "hana"
+        "db": {
+          "kind": "hana",
+          "model": [
+            "db",
+            "@sap/cds/common"
+          ]
+        }
       },
       "destinations": true,
       "html5-repo": true,
